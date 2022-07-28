@@ -1,0 +1,11 @@
+[package]
+name = "PupBin_APP-API"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+tokio = { version = "1.20.1", features = ["full"] }
+serde_urlencoded = "0.7"
+hyper = { version = "0.14.20", features = ["full"]}

@@ -5,8 +5,10 @@ use crate::utils::{text_assets,utils_func};
 use serde_urlencoded::de;
 use std::collections::HashMap;
 use super::new_paste;
+use sea_orm::DatabaseConnection;
+use std::sync::Arc;
 
-pub async fn router_function(req : Request<Body>) -> Result<Response<Body>, Infallible>
+pub async fn router_function(req : Request<Body>, db_conn : Arc<DatabaseConnection>) -> Result<Response<Body>, Infallible>
 {
     match (req.method(), req.uri().path()){
         (&Method::GET,"/") => {
@@ -25,7 +27,7 @@ pub async fn router_function(req : Request<Body>) -> Result<Response<Body>, Infa
                     return Ok(utils_func::failed_status_response("Error deserilazing body".to_string()));
                 }
             };
-            match new_paste::new_paste_handler(body_obj){
+            match new_paste::new_paste_handler(body_obj,db_conn.as_ref()).await{
                 Some(res) => {
                     Ok(res)
                 },

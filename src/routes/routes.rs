@@ -28,11 +28,11 @@ pub async fn router_function(req : Request<Body>, db_conn : Arc<DatabaseConnecti
                 }
             };
             match new_paste::new_paste_handler(body_obj,db_conn.as_ref()).await{
-                Some(res) => {
+                Ok(res) => {
                     Ok(res)
                 },
-                None => {
-                    return Ok(utils_func::failed_status_response("Needed fields not found".to_string()));
+                Err(err_status) => {
+                    return Ok(utils_func::failed_status_response(err_status));
                 }
             }
             

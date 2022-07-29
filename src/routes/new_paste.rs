@@ -9,7 +9,6 @@ use chrono::Duration;
 use crate::entity::paste::Entity as Paste;
 
 pub async fn new_paste_handler( body_obj : HashMap<String,String>, db_conn : &DatabaseConnection ) -> Result<Response<Body>, String>{
-    println!("{:?}",body_obj);
     let needed_fields = vec![ "paste_data" , "lifetime"];
     for (_i,val) in needed_fields.into_iter().enumerate(){
         match body_obj.get_key_value(val){
@@ -21,7 +20,11 @@ pub async fn new_paste_handler( body_obj : HashMap<String,String>, db_conn : &Da
             }
         }
     }
-    let lifetime_i32 = body_obj.get_key_value("lifetime").unwrap().1.trim();
+    let lifetime_i32 = match body_obj.get_key_value("lifetime"){
+        Some(n) => { n.1.trim() },
+        None => { return Err(String::from("All needed fields not provided")) }
+    };
+
     let mut lifetime_i32 : i32 = match lifetime_i32.parse(){
         Ok(n) => { n },
         Err(e) =>{
@@ -29,26 +32,26 @@ pub async fn new_paste_handler( body_obj : HashMap<String,String>, db_conn : &Da
             return Err(String::from("Expriy date corrupted, parsing error"))
         }   
     };
-    println!("{}",lifetime_i32);
     let mut lifetime_minute =  lifetime_i32%10; 
     lifetime_i32 /= 10;
     lifetime_minute +=  (lifetime_i32%10)*10; 
     lifetime_i32 /= 10;
     let lifetime_hour = lifetime_i32;
-    println!("{} {}", lifetime_minute,lifetime_hour);
     let expiry_datetime = Utc::now() + Duration::hours(lifetime_hour.into()) + Duration::minutes(lifetime_minute.into());
 
 
 
-    //Once we are use the KGS only returns unique keys, we can remove this check
-
-    match Paste::find_by_id(String::from("A2X34")).one(db_conn).await{
-        Ok( _ ) => {  },
-        Err(e) => { 
-            println!("Prminary key error : {}",e);
-            return Err(String::from("requested url already exists"))
-        }
-    }
+    //Once we are use the KGS only returns unique keys, we can remove this check, Can be used when
+    //we come to custom url's
+    /*
+     *match Paste::find_by_id(String::from("A2X34")).one(db_conn).await{
+     *    Ok( _ ) => { 
+     *        return Err(String::from("requested url already exists"));
+     *    },
+     *    Err(_) => { }
+     *};
+     */
+    //==============================================================================
 
     let model = paste::Model{
         url_hash : String::from("A2X34"), //Need to get from key_gen service
@@ -60,7 +63,16 @@ pub async fn new_paste_handler( body_obj : HashMap<String,String>, db_conn : &Da
                                             ChronoTime::from_hms(expiry_datetime.hour(),expiry_datetime.minute(),expiry_datetime.second()))
     };
     let model : paste::ActiveModel = model.into();
-    model.insert(db_conn).await.unwrap();
+    //commented below for testing and building purposes only
+    /*
+     *match model.insert(db_conn).await{
+     *    Ok(_n) => {  },
+     *    Err(e) => { 
+     *        println!("Databse error : {}",e);
+     *        return Err(String::from("Uh oh! Try after some time, we are facing issues on our end"));
+     *    }
+     *};
+     */
 
-    Ok(Response::new(Body::from("All needed fileds found")))
+    Ok(Response::new(Body::from("Paste created successfully"))) //Should also return link for paste.
 }

@@ -7,6 +7,7 @@ use sea_orm::DatabaseConnection;
 use chrono::prelude::*;
 use chrono::Duration;
 use crate::entity::paste::Entity as Paste;
+use std::net::UdpSocket;
 
 pub async fn new_paste_handler( body_obj : HashMap<String,String>, db_conn : &DatabaseConnection ) -> Result<Response<Body>, String>{
     let needed_fields = vec![ "paste_data" , "lifetime"];
@@ -52,6 +53,10 @@ pub async fn new_paste_handler( body_obj : HashMap<String,String>, db_conn : &Da
      *};
      */
     //==============================================================================
+
+    let socket = UdpSocket::bind("127.0.0.1:3400").expect("couldn't bind to address");
+    socket.connect("0.0.0.0:5001").expect("Connection to KGS failed, Maybe KGS is not turned on");
+    socket.send(String::from("{\"Work\":\"generate\", \"Pool\":\"5key\", \"Url\":\"\"}").as_bytes()).expect("Error sending messsage to KGS");
 
     let model = paste::Model{
         url_hash : String::from("A2X34"), //Need to get from key_gen service

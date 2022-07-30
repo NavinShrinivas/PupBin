@@ -1,3 +1,4 @@
 /target
 /migration/target
+/RKGS/drivers/RKGS_rust/target
 .env

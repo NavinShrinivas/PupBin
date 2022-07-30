@@ -12,3 +12,4 @@ hyper = { version = "0.14.20", features = ["full"]}
 sea-orm = { version = "^0.9.0", features = [ "sqlx-postgres", "runtime-tokio-rustls", "macros" ] }
 dotenv = "0.15.0"
 chrono = "0.4.19"
+RKGS_rust = { path = "./RKGS/drivers/RKGS_rust" }

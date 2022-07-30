@@ -24,8 +24,9 @@ var Addr =  net.UDPAddr{
 }
 
 type Job struct{
+    Conn *net.UDPConn
     buffer []byte
-    CAddr net.Addr
+    CAddr *net.UDPAddr
     len int
 
 }
@@ -33,7 +34,9 @@ type Job struct{
 type Job_split struct{
     Work string `json:"Work"`
     Pool string `json:"Pool"`
-    Url string `json:"Url"`
+    Len string  `json:"Len"`
+    Url string  `json:"Url"`
+    Error string  `json:"Error"`
 }
 
 var Common_job_buffer chan Job

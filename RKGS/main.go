@@ -1,9 +1,10 @@
 package main
 
 import (
-	"encoding/json"
-	"log"
-	"net"
+    "encoding/json"
+    "log"
+    "net"
+    "strconv"
 )
 
 
@@ -40,9 +41,10 @@ func main(){
 func conn_handlers(UDPConn *net.UDPConn){
     for{
         buffer := make([]byte,1000)
-        n,Caddr,err := UDPConn.ReadFrom(buffer)
+        n,Caddr,err := UDPConn.ReadFromUDP(buffer)
         Check_error(err)
         new_job := Job{
+            Conn : UDPConn,
             buffer : buffer,
             CAddr : Caddr,
             len : n,
@@ -70,5 +72,37 @@ func job_splitter(thread_splitter_buffer chan Job){
         job  := <- thread_splitter_buffer
         log.Println(string(job.buffer))
         json.Unmarshal([]byte(string(job.buffer[:job.len])), &v)
+        if v.Work == "generate"{
+            go generate(v,job)
+        }
     }   
+}
+
+
+//Generates BASE64 strings as we need to use this same key for indexing and url fetching
+func generate(job_obj Job_split, job_raw Job){
+    needed_len, err:= strconv.Atoi(job_obj.Len)
+    if err != nil{
+        reply_job := Job_split{
+            Work : "error",
+            Pool : job_obj.Pool,
+            Len : "",
+            Url : "",
+            Error : "INVALIDLEN",
+        }
+        json_reply_string_byte,_ := json.Marshal(reply_job);
+        job_raw.Conn.WriteToUDP(json_reply_string_byte,job_raw.CAddr)
+    }
+    reply_job := Job_split{
+        Work : "error",
+        Pool : job_obj.Pool,
+        Len : "",
+        Url : "",
+        Error : "INVALIDLEN",
+    }
+    json_reply_string_byte,_ := json.Marshal(reply_job);
+    job_raw.Conn.WriteToUDP(json_reply_string_byte,job_raw.CAddr)
+
+    log.Println(needed_len);
+    //binary_string_len := needed_len * 6; //6 for each char
 }

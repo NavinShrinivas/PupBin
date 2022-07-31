@@ -6,7 +6,8 @@ import (
     "errors"
     "log"
     "math"
-    "math/rand"    "net"
+    "math/rand"
+    "net"
     "strconv"
     "time"
     "github.com/gomodule/redigo/redis"
@@ -89,6 +90,8 @@ func job_splitter(thread_splitter_buffer chan Job){
         json.Unmarshal([]byte(string(job.buffer[:job.len])), &v)
         if v.Work == "generate"{
             go generate_url(v,job)
+        }else if v.Work == "check"{
+            go check_if_url_exists_db(v)
         }
     }   
 }
@@ -173,7 +176,7 @@ func check_url_is_unique_db(salted_url string) (bool,error){
     used, err := redis.String(pool_member.Do("HGET",salted_url,"used"))
     if err==nil{
         if used != "true"{
-            return true,nil
+            return false,nil
         }else{
             return false,nil
         }
@@ -181,6 +184,7 @@ func check_url_is_unique_db(salted_url string) (bool,error){
         Check_error(err)
         return false,errors.New("databse error")
     }
+
 }
 
 
@@ -197,4 +201,26 @@ func insert_url_db(salted_url string) error{
     }else{
         return nil
     }
+}
+
+func check_if_url_exists_db(check_job Job_split) (bool,error){
+    salted_url := check_job.Url+"_"+check_job.Pool;
+
+    pool_member := db_pool_var.Get()
+    defer pool_member.Close()
+
+
+    used, err := redis.String(pool_member.Do("HGET",salted_url,"used"))
+    if err==nil{
+        if used != "true"{
+            return false,nil
+        }else{
+            return true,nil
+        }
+    }else{
+        Check_error(err)
+        return false,errors.New("databse error")
+    }
+
+
 }

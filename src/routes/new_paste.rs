@@ -1,5 +1,7 @@
 use crate::entity::paste;
-use crate::entity::paste::Entity as Paste;
+/*
+ *use crate::entity::paste::Entity as Paste;
+ */
 use chrono::prelude::*;
 use chrono::Duration;
 use hyper::{Body, Response};
@@ -7,7 +9,6 @@ use sea_orm::entity::prelude::DateTime as SEAORMDateTime;
 use sea_orm::entity::prelude::*;
 use sea_orm::DatabaseConnection;
 use std::collections::HashMap;
-use std::net::UdpSocket;
 use RKGS_rust;
 
 pub async fn new_paste_handler(
@@ -47,7 +48,10 @@ pub async fn new_paste_handler(
         + Duration::minutes(lifetime_minute.into());
 
     let key = match RKGS_rust::generate_key(String::from("0.0.0.0:5001"), String::from("5key"), 5) {
-        Ok(key) => key,
+        Ok(key) => {
+            println!("New url generated : {}",key);
+            key
+        },
         Err(e) => {
             println!("{}", e);
             return Err(String::from(
@@ -56,7 +60,7 @@ pub async fn new_paste_handler(
         }
     };
 
-    //Once we are use the KGS only returns unique keys, we can remove this check, Can be used when
+    //Once we are using the KGS that only returns unique keys, we can remove this check, Can be used when
     //we come to custom url's
     /*
      *match Paste::find_by_id(String::from("A2X34")).one(db_conn).await{
@@ -89,15 +93,12 @@ pub async fn new_paste_handler(
     };
     let model: paste::ActiveModel = model.into();
     //commented below for testing and building purposes only
-    /*
-     *match model.insert(db_conn).await{
-     *    Ok(_n) => {  },
-     *    Err(e) => {
-     *        println!("Databse error : {}",e);
-     *        return Err(String::from("Uh oh! Try after some time, we are facing issues on our end"));
-     *    }
-     *};
-     */
-
+    match model.insert(db_conn).await{
+        Ok(_n) => {  },
+        Err(e) => {
+            println!("Databse error : {}",e);
+            return Err(String::from("Uh oh! Try after some time, we are facing issues on our end"));
+        }
+    };
     Ok(Response::new(Body::from("Paste created successfully"))) //Should also return link for paste.
 }

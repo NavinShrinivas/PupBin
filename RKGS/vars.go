@@ -1,11 +1,11 @@
-package main;
+package main
 
+import (
+	"log"
+	"net"
+	"sync"
 
-
-import(
-    "log"
-    "net"
-    "sync"
+	"github.com/gomodule/redigo/redis"
 )
 
 
@@ -44,4 +44,6 @@ var splitter_buffer [4]chan Job
 
 var Wg sync.WaitGroup
 
+//Databse pool : 
+var db_pool_var *redis.Pool
 

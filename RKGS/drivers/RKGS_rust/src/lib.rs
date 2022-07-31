@@ -1,5 +1,3 @@
-
-
 use std::net::UdpSocket;
 use serde::{Deserialize, Serialize};
 use serde_json;

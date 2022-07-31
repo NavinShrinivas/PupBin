@@ -1,14 +1,29 @@
 package main
 
 import (
+    "encoding/base64"
     "encoding/json"
+    "errors"
     "log"
-    "net"
+    "math"
+    "math/rand"    "net"
     "strconv"
+    "time"
+    "github.com/gomodule/redigo/redis"
 )
 
 
 func main(){
+
+    log.Println(" Connecting to redis databse")
+    db_pool_var = &redis.Pool{
+        MaxIdle:     20,
+        IdleTimeout: 2 * time.Second,
+        Dial: func() (redis.Conn, error) {
+            return redis.Dial("tcp", "localhost:6379")
+        },
+    }
+
     log.Println(" Starting server ")
     UDPConn, err := net.ListenUDP("udp", &Addr)
     if !Check_error(err){
@@ -73,14 +88,14 @@ func job_splitter(thread_splitter_buffer chan Job){
         log.Println(string(job.buffer))
         json.Unmarshal([]byte(string(job.buffer[:job.len])), &v)
         if v.Work == "generate"{
-            go generate(v,job)
+            go generate_url(v,job)
         }
     }   
 }
 
 
 //Generates BASE64 strings as we need to use this same key for indexing and url fetching
-func generate(job_obj Job_split, job_raw Job){
+func generate_url(job_obj Job_split, job_raw Job){
     needed_len, err:= strconv.Atoi(job_obj.Len)
     if err != nil{
         reply_job := Job_split{
@@ -93,16 +108,93 @@ func generate(job_obj Job_split, job_raw Job){
         json_reply_string_byte,_ := json.Marshal(reply_job);
         job_raw.Conn.WriteToUDP(json_reply_string_byte,job_raw.CAddr)
     }
-    reply_job := Job_split{
-        Work : "error",
-        Pool : job_obj.Pool,
-        Len : "",
-        Url : "",
-        Error : "INVALIDLEN",
-    }
-    json_reply_string_byte,_ := json.Marshal(reply_job);
-    job_raw.Conn.WriteToUDP(json_reply_string_byte,job_raw.CAddr)
+    byte_len := math.Ceil((float64(needed_len)*6.0)/8.0); //6 bits for each char
 
-    log.Println(needed_len);
-    //binary_string_len := needed_len * 6; //6 for each char
+    for{
+        random_byte_buff := make([]byte, int(byte_len))
+        rand.Seed(time.Now().UnixNano())
+        rand.Read(random_byte_buff);
+        url := base64.URLEncoding.EncodeToString(random_byte_buff)[0:needed_len] //to keep strict to len needs
+        //EncodeToString is Base64 encoding without "/" being part of encoding scheme
+
+        //Salting to check if this is unique in databse, optimised way to handle pools
+        salted_url := url+"_"+job_obj.Pool;
+
+        is_unique, err := check_url_is_unique_db(salted_url)
+        if err!=nil{
+            reply_job := Job_split{
+                Work : "error",
+                Pool : job_obj.Pool,
+                Len : "",
+                Url : "",
+                Error : "INTERNALEROR",
+            }
+            json_reply_string_byte,_ := json.Marshal(reply_job);
+            job_raw.Conn.WriteToUDP(json_reply_string_byte,job_raw.CAddr)
+            return;
+        }else{
+            if is_unique{
+                err := insert_url_db(salted_url)
+                if err!=nil{
+                    reply_job := Job_split{
+                        Work : "error",
+                        Pool : job_obj.Pool,
+                        Len : "",
+                        Url : "",
+                        Error : "INTERNALEROR",
+                    }
+                    json_reply_string_byte,_ := json.Marshal(reply_job);
+                    job_raw.Conn.WriteToUDP(json_reply_string_byte,job_raw.CAddr)
+                    return;
+                }
+                reply_job := Job_split{
+                    Work : "generate",
+                    Pool : job_obj.Pool,
+                    Len : job_obj.Len,
+                    Url : url,
+                    Error : "",
+                }
+                json_reply_string_byte,_ := json.Marshal(reply_job);
+                job_raw.Conn.WriteToUDP(json_reply_string_byte,job_raw.CAddr)
+                return;
+            }else{
+                continue
+            }
+        }
+
+    }
+}
+
+
+func check_url_is_unique_db(salted_url string) (bool,error){
+    pool_member := db_pool_var.Get()
+    defer pool_member.Close()
+
+    used, err := redis.String(pool_member.Do("HGET",salted_url,"used"))
+    if err==nil{
+        if used != "true"{
+            return true,nil
+        }else{
+            return false,nil
+        }
+    }else{
+        Check_error(err)
+        return false,errors.New("databse error")
+    }
+}
+
+
+func insert_url_db(salted_url string) error{
+    pool_member := db_pool_var.Get();
+    defer pool_member.Close()
+
+
+    _,err := pool_member.Do("HMSET",salted_url,"used","true")
+
+    if err!=nil{
+        Check_error(err)
+        return err
+    }else{
+        return nil
+    }
 }

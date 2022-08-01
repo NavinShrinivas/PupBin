@@ -17,6 +17,8 @@ dependencies = [
  "dotenv",
  "hyper",
  "sea-orm",
+ "serde",
+ "serde_json",
  "serde_urlencoded",
  "tokio",
 ]

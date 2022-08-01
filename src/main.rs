@@ -24,6 +24,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         env::var("DATABASE_USER").expect("ERROR : DATABASE_USER must be set in .env file!");
     let database_pass =
         env::var("DATABASE_PASSWORD").expect("ERROR : DATABASE_PASSWORD must be set in .env file!");
+    println!("Starting server...");
     println!("Storing to postgresql databse : {:#?}", database_name);
     //Postgresql Databse connection :
     let db_connection_url = format!(
@@ -51,6 +52,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     });
 
     let server = Server::bind(&api_addr).serve(router_service);
+    println!("Server listening on port 5000");
     match server.await {
         Err(e) => {
             println!("{}", e);

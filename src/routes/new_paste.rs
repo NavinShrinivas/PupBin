@@ -1,5 +1,4 @@
 use crate::entity::paste;
-use crate::entity::paste::Entity as Paste;
 use crate::utils::utils_func;
 use chrono::prelude::*;
 use chrono::Duration;

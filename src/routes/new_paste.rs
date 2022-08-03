@@ -76,7 +76,6 @@ pub async fn new_paste_handler(
      *};
      */
     //==============================================================================
-
     let model = paste::Model {
         url_hash: key.clone(), //Need to get from key_gen service
         paste_content: match body_obj.get_key_value("paste_data") {

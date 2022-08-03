@@ -238,11 +238,11 @@ func check_if_url_exists_db(job_obj Job_split, job_raw Job){
     }else{
         Check_error(err)
         reply_job := Job_split{
-            Work : "error",
+            Work : "checked",
             Pool : job_obj.Pool,
             Len : "",
             Url : "",
-            Error : "INTERNALEROR",
+            Error : "DOESNOTEXISTS",   //unsafe, even if there is error or the reponse is empty we are sending back not exists
         }
         json_reply_string_byte,_ := json.Marshal(reply_job);
         job_raw.Conn.WriteToUDP(json_reply_string_byte,job_raw.CAddr)

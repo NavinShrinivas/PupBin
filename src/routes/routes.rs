@@ -14,10 +14,14 @@ pub async fn router_function(
 ) -> Result<Response<Body>, Infallible> {
     match (req.method(), req.uri().path()) {
         (&Method::GET, "/") => Ok(Response::new(Body::from(text_assets::home_text_asset()))),
-        (&Method::POST, "/newPaste") => {
-            let body = match req.into_body().data().await{
-                Some(Ok(data)) => { data.to_vec() }
-                _ => { return Ok(utils_func::failed_status_response(String::from("Please provide a body"))) }
+        (&Method::POST, "/newPaste") | (&Method::POST, "/newPaste/") => {
+            let body = match req.into_body().data().await {
+                Some(Ok(data)) => data.to_vec(),
+                _ => {
+                    return Ok(utils_func::failed_status_response(String::from(
+                        "Please provide a body",
+                    )))
+                }
             };
             let body_obj = de::from_bytes::<HashMap<String, String>>(&body);
             let body_obj = match body_obj {
@@ -39,10 +43,14 @@ pub async fn router_function(
                 }
             }
         }
-        (&Method::GET, "/getPaste") => {
-            let body = match req.into_body().data().await{
-                Some(Ok(data)) => { data.to_vec() }
-                _ => { return Ok(utils_func::failed_status_response(String::from("Please provide a body"))) }
+        (&Method::GET, "/getPaste") | (&Method::GET, "/getPaste/") => {
+            let body = match req.into_body().data().await {
+                Some(Ok(data)) => data.to_vec(),
+                _ => {
+                    return Ok(utils_func::failed_status_response(String::from(
+                        "Please provide a body",
+                    )))
+                }
             };
             let body_obj = de::from_bytes::<HashMap<String, String>>(&body);
             let body_obj = match body_obj {

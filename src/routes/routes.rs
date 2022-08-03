@@ -13,6 +13,10 @@ pub async fn router_function(
     db_conn: Arc<DatabaseConnection>,
 ) -> Result<Response<Body>, Infallible> {
     match (req.method(), req.uri().path()) {
+        (&Method::OPTIONS, "/") =>{
+            //Preflight for CORS check
+            return Ok(utils_func::preflight_response())
+        },
         (&Method::GET, "/") => Ok(Response::new(Body::from(text_assets::home_text_asset()))),
         (&Method::POST, "/newPaste") | (&Method::POST, "/newPaste/") => {
             let body = match req.into_body().data().await {

@@ -15,6 +15,6 @@ echo "building tool..."
 cd Frontend
 cargo build --release
 if [ $? -eq "0" ];then
-    sudo cp ./target/debug/pupbin /bin
+    sudo cp ./target/release/pupbin /bin
 fi
 

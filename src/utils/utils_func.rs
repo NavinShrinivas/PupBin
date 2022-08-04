@@ -70,7 +70,7 @@ if [ $? -ne \"0\" ];then
     exit
 fi
 if [ $? -eq \"0\" ];then
-    sudo cp ./target/debug/pupbin /bin
+    sudo cp ./target/release/pupbin /bin
 fi
 
 ");

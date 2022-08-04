@@ -13,10 +13,10 @@ pub async fn router_function(
     db_conn: Arc<DatabaseConnection>,
 ) -> Result<Response<Body>, Infallible> {
     match (req.method(), req.uri().path()) {
-        (&Method::OPTIONS, "/") =>{
+        (&Method::OPTIONS, "/") => {
             //Preflight for CORS check
-            return Ok(utils_func::preflight_response())
-        },
+            return Ok(utils_func::preflight_response());
+        }
         (&Method::GET, "/") => Ok(Response::new(Body::from(text_assets::home_text_asset()))),
         (&Method::POST, "/newPaste") | (&Method::POST, "/newPaste/") => {
             let body = match req.into_body().data().await {
@@ -75,6 +75,9 @@ pub async fn router_function(
                     return Ok(utils_func::failed_status_response(err_status));
                 }
             }
+        }
+        (&Method::GET, "/install_script") | (&Method::GET, "/install_script/") => {
+            Ok(utils_func::install_script())
         }
         _ => {
             let response = utils_func::failed_status_response(String::from("INVALIDPATH"));

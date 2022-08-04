@@ -1,10 +1,12 @@
 # PupBin : The easiest pastebin in the west 
 
+```
    ___            ___  _
   / _ \__ _____  / _ )(_)__
  / ___/ // / _ \/ _  / / _ \
 /_/   \_,_/ .__/____/_/_//_/
          /_/
+```
 
 sharing, generating and storing logs and text files have never been easier!
 
@@ -19,8 +21,10 @@ I truly am sorry for the kinda large Readme, hope this table of contents helps :
 
 * [Tool Installation](#tool-installation)
   * [Using git](#using-git)
+  * [Using curl](#using-curl)
   * [Using Linux package managers](#using-linux-package-managers)
-  * [Windows](#windows)
+  * [Windows binaries](#windows-binaries)
+  * [Linux binaries](#linux-binaries)
   * [As Vim plugin](#as-vim-plugin)
 * [Building PupBin Server](#building-pupbin-backend)
 * [Tool Usage](#usage)
@@ -51,18 +55,37 @@ Here we see ways to isntall the frontend tool
 
 ### Using git 
 ```sh
-git clone --depth=1 https://github.com/NavinShrinivas/PupBin ~/PupBinSources
-cd PupBinSources
+git clone --depth=1 git@github.com:NavinShrinivas/PupBin.git ~/PupBinSources
+cd ~/PupBinSources
 # This script only works on linux
-./install_tool.sh
+sudo ./install_tool.sh
+```
+
+### Using curl
+```
+# Works only on linux
+curl  -sSf http://pupbin.ml/install_script | sh
 ```
 
 ### Using Linux package managers
 
-As for now, I've only pacakged the build for arch linux, you can isntall the tool using any AUR helper. Here is the command for yay :
+As for now, I've only pacakged the build for arch linux, you can install the tool using any AUR helper. Here is the command for yay :
 ```
 yay -S pupbin
 ```
+
+### Windows binaries
+
+> Note : compatibility of binaries working in your systems cant be confirmed, please preffer using other methods.
+
+### Linux binaries
+
+> Note : compatibility of binaries working in your systems cant be confirmed, please preffer using other methods.
+
+
+
+
+
 [License](LICENSE)
 ------------------
 

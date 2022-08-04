@@ -41,7 +41,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let db_conn = Database::connect(db_connection).await.unwrap();
     let arc = Arc::new(db_conn);
 
-    let api_addr = SocketAddr::from(([0, 0, 0, 0], 5000));
+    let api_addr = SocketAddr::from(([0, 0, 0, 0], 80));
     let router_service = make_service_fn(|_| {
         let inner_arc = Arc::clone(&arc);
         async move {
@@ -52,7 +52,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     });
 
     let server = Server::bind(&api_addr).serve(router_service);
-    println!("Server listening on port 5000");
+    println!("Server listening on port 80");
     match server.await {
         Err(e) => {
             println!("{}", e);

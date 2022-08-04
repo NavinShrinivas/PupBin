@@ -47,7 +47,9 @@ pub async fn get(command_line_args: crate::CommandLineData, server_url: String) 
     };
 
     if resp_body_obj["status"] == true{
-        println!("Paste fetch succesfully! Paste content : ");
+        if command_line_args.verbose == true{
+            println!("Paste fetch succefully! \n Paste content :");
+        }
         println!("{}", resp_body_obj["paste_content"].as_str().unwrap());
     }else{
         println!("Sorry, we couldnt get your paste.Make sure the given key is correct\nreponse :{}.", resp_body_obj);

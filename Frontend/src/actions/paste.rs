@@ -38,12 +38,12 @@ pub async fn paste(command_line_args: crate::CommandLineData, server_url: String
         .body(body)
         .send()
         .await
-    {
-        Ok(resp) => resp,
-        _ => {
-            panic!("Network error! Make sure you are connected. If so, report to devs")
-        }
-    };
+        {
+            Ok(resp) => resp,
+            _ => {
+                panic!("Network error! Make sure you are connected. If so, report to devs")
+            }
+        };
     let resp_body_buffer = match resp.bytes().await {
         Ok(bytes) => bytes.to_vec(),
         Err(_) => {
@@ -58,12 +58,15 @@ pub async fn paste(command_line_args: crate::CommandLineData, server_url: String
     };
 
     if resp_obj["status"] == true {
-        println!("Paste made successfully!");
+        if command_line_args.verbose == true{
+            println!("Paste made successfully!");
+            println!(
+                "Paste link : example.com/{} [Note : Web frontend not created yet :( ]",
+                resp_obj["key"]
+                );
+        }
         println!("Paste key : {}", resp_obj["key"]);
-        println!(
-            "Paste link : example.com/{} [Note : Web frontend not created yet :( ]",
-            resp_obj["key"]
-        );
+
     } else {
         println!("Failed to make paste :(");
         println!("Reponse : {}", resp_obj);

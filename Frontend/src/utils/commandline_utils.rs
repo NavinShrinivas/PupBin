@@ -33,7 +33,7 @@ pub fn commandline_processer() -> crate::CommandLineData {
                     } else {
                         panic!(
                             "Please give lifetime in correct format and correct encoding (HH:MM)"
-                        )
+                            )
                     }
                     temp_string
                 }
@@ -54,6 +54,9 @@ pub fn commandline_processer() -> crate::CommandLineData {
             ret_struct.get_key = get_key;
             ret_struct.paste = false;
             ret_struct.get = true;
+        }
+        if &value == "--verbose" {
+            ret_struct.verbose = true;
         }
     }
     return ret_struct;

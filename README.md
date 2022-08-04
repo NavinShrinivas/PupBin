@@ -43,7 +43,7 @@ I truly am sorry for the kinda large Readme, hope this table of contents helps :
 <!-- vim-markdown-toc -->
 
 
-For developers
+Development topics
 --------------
 
 ### Under the hood 

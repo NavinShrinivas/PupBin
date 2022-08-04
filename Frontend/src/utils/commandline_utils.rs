@@ -1,4 +1,5 @@
 use std::env;
+use crate::actions::help;
 
 pub fn commandline_processer() -> crate::CommandLineData {
     let mut ret_struct = crate::CommandLineData::new();
@@ -57,6 +58,9 @@ pub fn commandline_processer() -> crate::CommandLineData {
         }
         if &value == "--verbose" {
             ret_struct.verbose = true;
+        }
+        if &value == "--help"{
+            help::help_print();
         }
     }
     return ret_struct;

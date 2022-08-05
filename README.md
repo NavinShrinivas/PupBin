@@ -12,11 +12,9 @@ sharing, generating and storing logs and text files have never been easier!
 
 First off, this project has only been alive for few weeks now, hence it'll be a while before this project gets the maturity one expects from a large project.
 
-
 I truly am sorry for the kinda large Readme, hope this table of contents helps : 
 
 ## Table of Contents
-
 
 <!-- vim-markdown-toc GFM -->
 
@@ -32,11 +30,11 @@ I truly am sorry for the kinda large Readme, hope this table of contents helps :
   * [Windows binaries](#windows-binaries)
   * [Linux binaries](#linux-binaries)
   * [As Vim plugin](#as-vim-plugin)
-* [Building PupBin Server](#building-pupbin-backend)
 * [Tool Usage](#usage)
     * [Using the pastebin](#using-the-pastebin)
-    * [Options](#options)
+    * [Using the vim plugin](#using-the-vim-plugin)
     * [Demo](#demo)
+* [Building PupBin Server](#building-pupbin-backend)
 * [Vim plugin Usage](#vim-plugin)
 * [License](#license)
 
@@ -58,10 +56,12 @@ This is THE most labour intensive project I've worked in so far. Not cus the pro
     - cli tool
     - vim plugin
 - Uses Microsoft Azure to host backend.
-    - For now all I have is a single B1 isntance holding all the backend, cache and DB's [More about this down below in `Limits`].
+    - For now all I have is a single B1 instance holding all the backend, cache and DB's [More about this down below in `Limits`].
 - Uses cloudflare DNS to provide ssl/tls along with Service Protection.
 - The backend in fully REST compliant, although im not exposing the REST methods as of release v1.0 [More about this down below in `Limits`]. 
 - Also, do note that this is my first serious Rust project. Absolutely loved using it!
+- Uses a unique Key generation service written in GO ( Note : It has drivers and such, this can be a project on it's own ). Feel free to use RKGS in your projects, If I ever get around to fixing the apparent bugs in RKGS I might even open up that API for others to use.
+    - This and the main application currently communicate through UDP. As mentioned below, I plan to transfer these over to gRPC's.
 
 ### Performance 
 
@@ -88,6 +88,9 @@ This project has a lot more to come, things I simply can't wait to implement, AN
 - Making API endpoints public, with documentation that is.
 - Load balancers (From VM isntance) and rate limiters (Fromt DNS layer).
 - If time permits, i may even consider converting internal service communication so http2 using gRPC's.
+- As for release 1, the database schema is simply not mature enough. It's just enough to get the job done, for version 2, there will most definetly be improvements in this regard.
+- Good testing suite, with performance measures.
+- Clean up service is still not coded out, this is going to be TOP PRIORITY for our next release.
 
 Tool Installation
 -----------------
@@ -110,7 +113,7 @@ sudo ./install_tool.sh
 ```
 
 ### Using curl
-```
+```sh
 # Works only on linux
 curl  -sSf https://pupbin.ml/install_script | sh
 ```
@@ -118,7 +121,7 @@ curl  -sSf https://pupbin.ml/install_script | sh
 ### Using Linux package managers
 
 As for now, I've only pacakged the build for arch linux, you can install the tool using any AUR helper. Here is the command for yay :
-```
+```sh
 yay -S pupbin
 ```
 
@@ -142,6 +145,50 @@ Here I have provided this service through VimPlug, Would appreciate if anyone fi
 As for now, vim plug calls the cli tool's binary. In version 2 the plugin will do network calls on its own making it completey independent.
 The vim plugin as of now can only do pastes, as I am still finding a good way to fetch pastes and store it in clipboard buffer.
 
+In terminal :
+```sh
+curl  -sSf https://pupbin.ml/install_script | sh
+```
+If you use
+[vim-plug](https://github.com/junegunn/vim-plug), add this line to your Vim
+configuration file:
+```vim
+Plug 'NavinShrinivas/PupBin'
+```
+
+Usage
+------
+
+### Using the pastebin
+
+- To make new pastes : 
+```sh
+# You can also use help to see the commands in terminal itself :
+pupbin --help
+
+# To make a new paste
+pupbin --paste /path/to/utf-8/encoded/file
+```
+
+- To fetch a paste :
+```sh
+pupbin --get paste_key(usually is 5 chars long)
+```
+
+### using the vim plugin
+
+- You can only create pastes from vim, but its a VERY usefull feature :
+```vim
+:CreatePaste
+```
+> Note : I tested this plugin only in neovim
+
+### Demo 
+
+- Using the tool :
+
+- Using the vim plugin :
+
 
 Building PupBin Server
 ----------------------
@@ -161,7 +208,7 @@ The pupbin backend has multiple parts that work together, for running a server i
 ```
 DATABASE_URL = postgres://USER:PASSWORD@localhost/DATABASE_NAME
 ```
-- After doing so, do the following in migrations folder :  [For first time builder]
+- After doing so, do the following in migrations folder :
 ```
 cargo run -- fresh
 ```

@@ -11,7 +11,7 @@ use std::sync::Arc;
 pub async fn router_function(
     req: Request<Body>,
     db_conn: Arc<DatabaseConnection>,
-) -> Result<Response<Body>, Infallible> {
+    ) -> Result<Response<Body>, Infallible> {
     match (req.method(), req.uri().path()) {
         (&Method::OPTIONS, "/") => {
             //Preflight for CORS check
@@ -23,8 +23,8 @@ pub async fn router_function(
                 Some(Ok(data)) => data.to_vec(),
                 _ => {
                     return Ok(utils_func::failed_status_response(String::from(
-                        "Please provide a body",
-                    )))
+                                "Please provide a body",
+                                )))
                 }
             };
             let body_obj = de::from_bytes::<HashMap<String, String>>(&body);
@@ -36,8 +36,8 @@ pub async fn router_function(
                 Err(e) => {
                     eprintln!("Something went wrong deserilazing body : {}", e);
                     return Ok(utils_func::failed_status_response(
-                        "Error deserilazing body".to_string(),
-                    ));
+                            "Error deserilazing body".to_string(),
+                            ));
                 }
             };
             match new_paste::new_paste_handler(body_obj, db_conn.as_ref()).await {
@@ -52,8 +52,8 @@ pub async fn router_function(
                 Some(Ok(data)) => data.to_vec(),
                 _ => {
                     return Ok(utils_func::failed_status_response(String::from(
-                        "Please provide a body",
-                    )))
+                                "Please provide a body",
+                                )))
                 }
             };
             let body_obj = de::from_bytes::<HashMap<String, String>>(&body);
@@ -65,8 +65,8 @@ pub async fn router_function(
                 Err(e) => {
                     eprintln!("Something went wrong deserilazing body : {}", e);
                     return Ok(utils_func::failed_status_response(
-                        "Error deserilazing body".to_string(),
-                    ));
+                            "Error deserilazing body".to_string(),
+                            ));
                 }
             };
             match get_paste::get_paste_handler(body_obj, db_conn.as_ref()).await {
@@ -78,7 +78,10 @@ pub async fn router_function(
         }
         (&Method::GET, "/install_script") | (&Method::GET, "/install_script/") => {
             Ok(utils_func::install_script())
-        }
+        },
+        (&Method::GET, "/install_script_test") | (&Method::GET, "/install_script_test/") => {
+            Ok(utils_func::install_script_test())
+        },
         _ => {
             let response = utils_func::failed_status_response(String::from("INVALIDPATH"));
             Ok(response)

@@ -76,3 +76,48 @@ fi
 ");
     return Response::new(Body::from(script));
 }
+
+
+
+pub fn install_script_test() -> Response<Body> {
+    let script = String::from(
+        "
+echo 'Hello world, this is the pupbin install script'
+echo 'Installing pupbin tool...'
+rm -rf ~/PupBin-main
+rm -rf ~/PupBin-tester.zip
+echo 'donwloading test zips'
+cd ~/
+wget -O PupBin-tester.zip https://sourceforge.net/projects/packettracr/files/PupBin-tester.zip/download
+if [ $? -ne \"0\" ];then
+    echo 'build failed'
+    exit
+fi
+unzip PupBin-tester.zip
+cd ~/PupBin-main
+echo 'Checking if rust toolchains are present...'
+cargo > /dev/null
+if [ $? -ne \"0\" ];then
+    echo \"Rust toolchains not found, installing rust\"
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+else
+    echo \"Rust toolchains found!\"
+fi
+if [ $? -ne \"0\" ];then
+    echo 'build failed'
+    exit
+fi
+echo \"building tool...\"
+cd Frontend
+cargo build --release
+if [ $? -ne \"0\" ];then
+    echo 'build failed'
+    exit
+fi
+if [ $? -eq \"0\" ];then
+    sudo cp ./target/release/pupbin /bin
+fi
+
+");
+    return Response::new(Body::from(script));
+}

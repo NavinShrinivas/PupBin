@@ -131,7 +131,7 @@ yay -S pupbin
 
 You can find the latest binaries in github releases
 
-Soon : We will try and pacakge our tool in cli and choclatey
+Soon we will try and pacakge our tool in winget and choclatey
 
 ### Linux binaries
 
@@ -149,7 +149,7 @@ In terminal :
 ```sh
 curl  -sSf https://pupbin.ml/install_script | sh
 ```
-If you use
+After above, If you use
 [vim-plug](https://github.com/junegunn/vim-plug), add this line to your Vim
 configuration file:
 ```vim

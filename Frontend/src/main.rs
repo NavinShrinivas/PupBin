@@ -26,7 +26,7 @@ impl CommandLineData {
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let command_line_args = utils::commandline_utils::commandline_processer();
-    let backend_server_url = String::from("http://0.0.0.0:5000"); //production build, this has to be changed
+    let backend_server_url = String::from("https://pupbin.ml"); //production build, this has to be changed
     if command_line_args.paste == true {
         actions::paste::paste(command_line_args, backend_server_url).await;
     } else if command_line_args.get == true {

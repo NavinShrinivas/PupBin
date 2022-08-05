@@ -82,7 +82,12 @@ My decision of puttin the ip address behind a cloudflare dns was also because of
 ### Future 
 
 This project has a lot more to come, things I simply can't wait to implement, ANY CONTRIBUTION of ANY SORTS are welcome :).
-
+- As for now, vim plug calls the cli tool's binary. In version 2 the plugin will do network calls on its own making it completey independent.
+- More linux package manager 
+- Looking at some general stability imporovements, it's not at a level I would like for this project.
+- Making API endpoints public, with documentation that is.
+- Load balancers (From VM isntance) and rate limiters (Fromt DNS layer).
+- If time permits, i may even consider converting internal service communication so http2 using gRPC's.
 
 Tool Installation
 -----------------
@@ -107,7 +112,7 @@ sudo ./install_tool.sh
 ### Using curl
 ```
 # Works only on linux
-curl  -sSf http://pupbin.ml/install_script | sh
+curl  -sSf https://pupbin.ml/install_script | sh
 ```
 
 ### Using Linux package managers
@@ -134,6 +139,8 @@ You can find the latest binaries in github releases
 ### As vim plugins 
 
 Here I have provided this service through VimPlug, Would appreciate if anyone figures out other vim package managers and implement it as well.
+As for now, vim plug calls the cli tool's binary. In version 2 the plugin will do network calls on its own making it completey independent.
+The vim plugin as of now can only do pastes, as I am still finding a good way to fetch pastes and store it in clipboard buffer.
 
 
 Building PupBin Server
@@ -148,7 +155,7 @@ The pupbin backend has multiple parts that work together, for running a server i
     - postgresql 
     - rust toochain
     - go tool chain
-    - redi server 
+    - redis server 
 - start postgresql service and create a user and databse in postgresql 
 - make a `.env` file in migration/ folder and fill it with this : 
 ```

@@ -43,6 +43,21 @@ pub fn install_script() -> Response<Body> {
         "
 echo 'Hello world, this is the pupbin install script'
 echo 'Installing pupbin tool...'
+
+echo \"Which distro are u running me on?\"
+echo \"1.Debian base distros [Ubunut, pop, ...]\"
+echo \"2.Arch base distro [EOS, Manjaro, ..]\"
+echo \"3.Doesn't (Make sure you have openssl and libssl dev installed, this options skips process)\"
+echo -n \"Enter option :\"
+read option
+
+if [ $option -ne \"1\" ];then
+    sudo apt update
+    sudo apt install -y openssl libssl-dev pkg-config curl wget
+elif [ $option -eq \"2\" ]; then
+    sudo pacman -Syy openssl  curl wget
+fi
+
 echo 'cloning repo'
 git clone --depth=1 git@github.com:NavinShrinivas/PupBin.git ~/PupBinSources
 if [ $? -ne \"0\" ];then

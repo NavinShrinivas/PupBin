@@ -8,6 +8,8 @@
          /_/
 
 sharing, generating and storing logs and text files have never been easier!
+
+PupBin aims to fit right into your workflow, where sharing and getting files doesn’t need you to open a different application.
 ```
 
 First off, this project has only been alive for few weeks now, hence it'll be a while before this project gets the maturity one expects from a large project.

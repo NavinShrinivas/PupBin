@@ -32,13 +32,12 @@ I truly am sorry for the kinda large Readme, hope this table of contents helps :
     * [Using the pastebin](#using-the-pastebin)
     * [Using the vim plugin](#using-the-vim-plugin)
     * [Demo](#demo)
-* [For developers](#Development-topics)
+* [For developers](#developer)
   * [Under the hood](#under-the-hood)
   * [Performance](#performance)
   * [Limits and resources](#limits-and-resources)
   * [Future](#future)
-* [Building PupBin Server](#building-pupbin-backend)
-* [Vim plugin Usage](#vim-plugin)
+* [Building PupBin Server](#pupbin-backend)
 * [License](#license)
 
 <!-- vim-markdown-toc -->
@@ -90,7 +89,7 @@ Soon we will try and package our tool in Winget and chocolatey
 
 You can find the latest binaries in GitHub releases
 
-### As vim plugins 
+### As vim plugin
 
 Here I have provided this service through VimPlug, Would appreciate it if anyone figures out other vim package managers and implement it as well.
 As for now, the vim plug calls the CLI tool's binary. In version 2 the plugin will do network calls on its own making it completely independent.
@@ -138,11 +137,15 @@ pupbin --get paste_key(usually is 5 chars long)
 
 - Using the tool :
 
+https://user-images.githubusercontent.com/42774281/183385212-731f4a98-c83b-4069-a0c5-bc1c4f2c7fc9.mp4
+
 - Using the vim plugin :
 
+https://user-images.githubusercontent.com/42774281/183385028-b7eef8ce-9d96-4b52-b4fb-77700d5d306f.mp4
 
-Development topics
---------------
+
+Developer
+---------
 
 ### Under the hood 
 
@@ -193,8 +196,8 @@ This project has a lot more to come, things I simply can't wait to implement, AN
 - Clean up service is still not coded out, this is going to be a TOP PRIORITY for our next release.
 
 
-Building PupBin Server
-----------------------
+PupBin Backend
+--------------
 
 > Note: This section is for people who want to contribute and test their builds locally. Very soon we'll automate this and even make a CI/CD pipeline if the need for it rises.
 

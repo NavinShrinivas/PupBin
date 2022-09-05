@@ -2,4 +2,5 @@
 /migration/target
 /RKGS/drivers/RKGS_rust/target
 /Frontend/target
+/PupBin_Cleanup/target
 .env

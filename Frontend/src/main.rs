@@ -7,7 +7,7 @@ pub struct CommandLineData {
     paste: bool,
     get: bool,
     get_key: String,
-    verbose : bool
+    verbose: bool,
 }
 
 impl CommandLineData {
@@ -18,7 +18,7 @@ impl CommandLineData {
             paste: false,
             get: false,
             get_key: String::from(""),
-            verbose : false
+            verbose: false,
         }
     }
 }
@@ -26,7 +26,7 @@ impl CommandLineData {
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let command_line_args = utils::commandline_utils::commandline_processer();
-    let backend_server_url = String::from("https://pupbin.ml"); //production build, this has to be changed
+    let backend_server_url = String::from("https://pupbin.navinshrinivas.com"); //production build, this has to be changed
     if command_line_args.paste == true {
         actions::paste::paste(command_line_args, backend_server_url).await;
     } else if command_line_args.get == true {

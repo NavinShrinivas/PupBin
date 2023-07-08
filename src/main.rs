@@ -28,7 +28,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     println!("Storing to postgresql databse : {:#?}", database_name);
     //Postgresql Databse connection :
     let db_connection_url = format!(
-        "postgres://{}:{}@localhost/{}",
+        "mysql://{}:{}@localhost/{}",
         database_user, database_pass, database_name
     );
     let mut db_connection = ConnectOptions::new(db_connection_url);
